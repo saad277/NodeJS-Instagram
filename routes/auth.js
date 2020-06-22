@@ -7,6 +7,20 @@ const jwt=require("jsonwebtoken")
 const {JWTKey}=require("../config/keys")
 const requireLogin=require("../middleWare/requireLogin")
 
+const nodemailer=require("nodemailer");
+
+const sendgridTransport=require("nodemailer-sendgrid-transport")
+
+
+
+
+const transporter=nodemailer.createTransport(sendgridTransport({
+
+    auth:{
+        api_key:"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"
+    }
+}))
+
 router.get("/protected",requireLogin,(req,res)=>{
 
     res.send("hello user")
@@ -70,6 +84,14 @@ router.post("/signUp",(req,res)=>{
             })
 
             user.save().then((user)=>{
+
+                transporter.sendMail({
+                        
+                    to:user.email,
+                    from:"no-reply@insta.com",
+                    subject:"signup success",
+                    html:"<h1>Welcome To Instagram"
+                })
 
 
                 res.json({message:"user saved"})
